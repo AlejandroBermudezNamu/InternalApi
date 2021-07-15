@@ -27,6 +27,12 @@ namespace InternalNamuWebsiteAPI.Controllers
             return Ok(await openIdContext.ToListAsync());
         }
 
+        [HttpGet("/api/frogdollars/{username}")]
+        public async Task<IActionResult> GetByUser(string username)
+        {
+            return Ok(await _context.VirtualFds.Where(i => i.UserName == username).ToListAsync());
+        }
+
         // GET: Frogdollars/Details/5
         public async Task<IActionResult> Details(int? id)
         {
