@@ -17,6 +17,8 @@ namespace InternalNamuWebsiteAPI
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,13 +29,28 @@ namespace InternalNamuWebsiteAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+
             // Add framework services.
             services.AddDbContext<OpenIdContext>(options =>
                 options.UseSqlServer("Server=10.0.61.55;Database=OpenId;User Id=sa;Password=5f7d*PnN*s"));
 
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:8000", "http://localhost:8989");
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyHeader();
+                                  });
+            });
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+            
 
             services.AddControllers();
         }
@@ -46,9 +63,10 @@ namespace InternalNamuWebsiteAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
+
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 

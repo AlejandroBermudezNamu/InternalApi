@@ -32,6 +32,21 @@ namespace InternalNamuWebsiteAPI.Controllers
             return Ok(await _context.UserOpenIds.Where(i => i.Mail == email).ToListAsync());
         }
 
+        [HttpGet("/api/users/active")]
+        public async Task<IActionResult> GetAllActiveUsers()
+        {
+            var users = await _context.UserOpenIds.Where(i => i.Status == 0
+            && i.Mail!= "rodrigoespinoza@namutravel.com"
+            && i.Mail != ""
+            ).Select(i => new
+            {
+                Email = i.Mail,
+                Name = i.Nam
+            }).ToListAsync();
+
+            return Ok(users);
+        }
+
         // GET: Users/Details/5
         public async Task<IActionResult> Details(string id)
         {

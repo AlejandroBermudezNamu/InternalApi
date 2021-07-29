@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternalNamuWebsiteAPI.Models;
+using InternalNamuWebsiteAPI.Models.DTO;
 
 namespace InternalNamuWebsiteAPI.Controllers
 {
@@ -27,10 +28,43 @@ namespace InternalNamuWebsiteAPI.Controllers
             return Ok(await openIdContext.ToListAsync());
         }
 
-        [HttpGet("/api/frogdollars/{username}")]
-        public async Task<IActionResult> GetByUser(string username)
+        [HttpGet("/api/frogdollars/{email}")]
+        public async Task<IActionResult> GetByUser(string email)
         {
-            return Ok(await _context.VirtualFds.Where(i => i.UserName == username).ToListAsync());
+            var frogdollarList = await _context.VirtualFds.Include(i => i.UserNameNavigation).Where(i => i.UserNameNavigation.Mail == email).OrderByDescending(i => i.DateCreated).ToListAsync();
+            var frogdollarsAmount = frogdollarList.Sum(i => i.Quantity);
+
+            return Ok(new {
+                frogdollarList,
+                frogdollarsAmount
+            });
+        }
+
+        [HttpPost("/api/frogdollars/SendFrogdollars")]
+        public async Task<IActionResult> SendFrogdollars(FrogdollarRequestDTO frogdollarRequestDTO)
+        {
+            var result = false;
+            var userFrom = await _context.UserOpenIds.Where(i => i.Mail == frogdollarRequestDTO.EmailFrom).FirstOrDefaultAsync();
+            var userTo = await _context.UserOpenIds.Where(i => i.Mail == frogdollarRequestDTO.EmailTo).FirstOrDefaultAsync();
+
+            if (userFrom.Fdcredits >= frogdollarRequestDTO.Quantity)
+            {
+                var newfrogdollars = new VirtualFd()
+                {
+                    Granter = userFrom.UserName,
+                    UserName = userTo.UserName,
+                    Quantity = frogdollarRequestDTO.Quantity,
+                    Description = frogdollarRequestDTO.Description,
+                    DateCreated = DateTime.Now
+                };
+
+                await _context.VirtualFds.AddAsync(newfrogdollars);
+                await _context.SaveChangesAsync();
+
+                result = true;
+            }
+
+            return Ok(new { result = result });
         }
 
         // GET: Frogdollars/Details/5
