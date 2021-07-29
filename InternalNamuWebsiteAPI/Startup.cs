@@ -41,7 +41,7 @@ namespace InternalNamuWebsiteAPI
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://localhost:8000", "http://localhost:8989");
+                                      builder.WithOrigins("http://localhost:8000", "http://localhost:8989", "https://internal-blog.namutechnologies.com");
                                       builder.AllowAnyMethod();
                                       builder.AllowAnyHeader();
                                   });
