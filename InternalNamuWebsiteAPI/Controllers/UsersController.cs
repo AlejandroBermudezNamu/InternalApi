@@ -42,7 +42,9 @@ namespace InternalNamuWebsiteAPI.Controllers
             {
                 Email = i.Mail,
                 Name = i.Nam
-            }).ToListAsync();
+            })
+            .OrderBy(i => i.Name)
+            .ToListAsync();
 
             return Ok(users);
         }
