@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternalNamuWebsiteAPI.Models;
 
@@ -20,11 +18,7 @@ namespace InternalNamuWebsiteAPI.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            return Ok(await _context.UserOpenIds.ToListAsync());
-        }
+  
 
         [HttpGet("/api/users/{email}")]
         public async Task<IActionResult> GetByEmail(string email)

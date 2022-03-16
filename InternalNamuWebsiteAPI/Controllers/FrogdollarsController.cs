@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternalNamuWebsiteAPI.Models;
 using InternalNamuWebsiteAPI.Models.DTO;
+using InternalNamuWebsiteAPI.Context;
 
 namespace InternalNamuWebsiteAPI.Controllers
 {
